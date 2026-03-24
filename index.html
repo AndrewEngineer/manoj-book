@@ -160,17 +160,9 @@
     position: relative;
   }
   .book-mockup {
-    width: 320px;
-    height: 460px;
-    background: linear-gradient(145deg, #1a3a5c 0%, #0a1e35 50%, #132d4a 100%);
-    border-radius: 4px 16px 16px 4px;
-    box-shadow: 30px 30px 80px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.1) inset;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-    text-align: center;
+    width: 340px;
+    border-radius: 4px 12px 12px 4px;
+    box-shadow: 30px 30px 80px rgba(0,0,0,0.5);
     position: relative;
     overflow: hidden;
   }
@@ -180,25 +172,12 @@
     left: 0; top: 0; bottom: 0;
     width: 20px;
     background: linear-gradient(90deg, rgba(0,0,0,0.3), transparent);
+    z-index: 1;
   }
-  .book-mockup .book-title {
-    font-family: 'Playfair Display', serif;
-    color: var(--gold);
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 20px;
-  }
-  .book-mockup .book-line {
-    width: 40px; height: 2px;
-    background: var(--gold);
-    opacity: 0.5;
-    margin-bottom: 20px;
-  }
-  .book-mockup .book-author {
-    color: rgba(255,255,255,0.6);
-    font-size: 13px;
-    line-height: 1.6;
+  .book-mockup img {
+    width: 100%;
+    display: block;
+    border-radius: 4px 12px 12px 4px;
   }
 
   /* ===== ENDORSEMENT STRIP ===== */
@@ -707,9 +686,7 @@
     </div>
     <div class="hero-visual">
       <div class="book-mockup">
-        <div class="book-title">The Unanchored Central Banker</div>
-        <div class="book-line"></div>
-        <div class="book-author">Manoj Pradhan<br>&amp; Charles Goodhart</div>
+        <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Unanchored_central_banker_cover_m_26.webp" alt="The Unanchored Central Banker book cover">
       </div>
     </div>
   </div>
