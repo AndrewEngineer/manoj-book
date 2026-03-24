@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Unanchored Central Banker — Redesign Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1a2e;
+    --navy-light: #1a2940;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a0;
+    --cream: #faf8f4;
+    --warm-gray: #6b6560;
+    --text: #2a2522;
+    --text-light: #7a756f;
+    --border: #e8e4df;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15, 26, 46, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 0 48px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  nav .logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  nav .logo span { color: var(--gold); }
+  nav .nav-links { display: flex; align-items: center; gap: 32px; }
+  nav .nav-links a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  nav .nav-links a:hover { color: var(--white); }
+  nav .nav-links .btn-login {
+    background: var(--gold);
+    color: var(--navy);
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+  nav .nav-links .btn-login:hover { background: var(--gold-light); }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    background: var(--navy);
+    display: flex; align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 50%; height: 100%;
+    background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(201,168,76,0.02) 100%);
+  }
+  .hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+  .hero-text { }
+  .hero-tag {
+    display: inline-block;
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    padding: 6px 14px;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 4px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    margin-bottom: 16px;
+    max-width: 480px;
+  }
+  .hero-authors {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 40px;
+  }
+  .hero-authors strong { color: rgba(255,255,255,0.8); font-weight: 500; }
+  .hero-actions { display: flex; gap: 16px; align-items: center; }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+    padding: 16px 36px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-secondary {
+    color: rgba(255,255,255,0.7);
+    padding: 16px 36px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { color: var(--white); border-color: rgba(255,255,255,0.4); }
+
+  .hero-visual {
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+  .book-mockup {
+    width: 320px;
+    height: 460px;
+    background: linear-gradient(145deg, #1a3a5c 0%, #0a1e35 50%, #132d4a 100%);
+    border-radius: 4px 16px 16px 4px;
+    box-shadow: 30px 30px 80px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.1) inset;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .book-mockup::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 20px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.3), transparent);
+  }
+  .book-mockup .book-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .book-mockup .book-line {
+    width: 40px; height: 2px;
+    background: var(--gold);
+    opacity: 0.5;
+    margin-bottom: 20px;
+  }
+  .book-mockup .book-author {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* ===== ENDORSEMENT STRIP ===== */
+  .endorsement-strip {
+    background: var(--cream);
+    padding: 48px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .endorsement-strip blockquote {
+    max-width: 700px;
+    margin: 0 auto;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--text);
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .endorsement-strip cite {
+    display: block;
+    margin-top: 16px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  /* ===== WHAT'S INSIDE ===== */
+  .whats-inside {
+    padding: 100px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 60px;
+    letter-spacing: -0.5px;
+  }
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .chapter-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 24px;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .chapter-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    transform: translateY(-4px);
+  }
+  .chapter-num {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .chapter-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 12px;
+    color: var(--navy);
+  }
+  .chapter-card p {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  /* ===== AUTHORS ===== */
+  .authors {
+    background: var(--navy);
+    padding: 100px 48px;
+  }
+  .authors-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .authors .section-label { color: var(--gold); }
+  .authors .section-title { color: var(--white); }
+  .author-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  .author-card {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .author-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--navy-light);
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 2px solid rgba(201,168,76,0.3);
+  }
+  .author-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .author-card h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--white);
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .author-card .author-role {
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .author-card p {
+    color: rgba(255,255,255,0.55);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ===== SECTION DIVIDER ===== */
+  .divider {
+    text-align: center;
+    padding: 60px 48px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-light);
+  }
+  .divider::before, .divider::after {
+    content: '———';
+    color: var(--border);
+    margin: 0 16px;
+  }
+
+  /* ======================================================
+     MEMBERS AREA — CHAPTER NAVIGATION
+     ====================================================== */
+  .members-section {
+    background: var(--cream);
+    padding: 80px 48px 100px;
+  }
+  .members-header {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .members-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--navy);
+  }
+  .members-nav {
+    display: flex; gap: 16px;
+  }
+  .members-nav a {
+    font-size: 14px;
+    color: var(--text-light);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .members-nav a:hover, .members-nav a.active {
+    background: var(--white);
+    color: var(--navy);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .chapter-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .chapter-list-item {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .chapter-list-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  }
+  .chapter-thumb {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .chapter-thumb::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(15,26,46,0.7) 0%, transparent 60%);
+  }
+  .chapter-thumb .ch-num {
+    position: absolute;
+    bottom: 12px; left: 16px;
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    z-index: 1;
+  }
+  .chapter-list-item .ch-body {
+    padding: 20px;
+  }
+  .chapter-list-item h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .chapter-list-item p {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+  .reading-time {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* ======================================================
+     CHAPTER READING VIEW
+     ====================================================== */
+  .reading-section {
+    padding: 0;
+  }
+  .reading-hero {
+    height: 400px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .reading-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .reading-hero-content { position: relative; max-width: 700px; }
+  .reading-hero .ch-label {
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .reading-hero h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--white);
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .reading-hero .ch-meta {
+    color: rgba(255,255,255,0.5);
+    font-size: 14px;
+  }
+
+  /* sticky chapter nav */
+  .chapter-nav {
+    position: sticky; top: 64px; z-index: 90;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 60px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .chapter-nav a {
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .chapter-nav a:hover { color: var(--text); }
+  .chapter-nav a.active {
+    color: var(--navy);
+    border-bottom-color: var(--gold);
+  }
+
+  /* reading content */
+  .reading-content {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+  }
+  .reading-content .epigraph {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.6;
+    padding: 32px 0 32px 32px;
+    border-left: 3px solid var(--gold);
+    margin-bottom: 12px;
+  }
+  .reading-content .epigraph-cite {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--text-light);
+    font-style: normal;
+    padding-left: 32px;
+    margin-bottom: 48px;
+  }
+  .reading-content p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+  .reading-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 56px 0 24px;
+    line-height: 1.25;
+  }
+  .reading-content h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 48px 0 20px;
+  }
+  .reading-content .section-break {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--border);
+    font-size: 18px;
+    letter-spacing: 12px;
+  }
+
+  /* chart in reading */
+  .chart-container {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px -40px;
+  }
+  .chart-container .chart-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .chart-container img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    margin-top: 8px;
+  }
+  .chart-source {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--text-light);
+    font-style: italic;
+  }
+  .reading-content .section-image {
+    width: calc(100% + 80px);
+    margin: 48px -40px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .reading-content .section-image img {
+    width: 100%;
+    display: block;
+  }
+  .reading-content .bold-lead { font-weight: 600; }
+  .reading-content .indent {
+    padding-left: 32px;
+    border-left: 2px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .reading-content .references {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-light);
+  }
+  .reading-content .references p {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  /* ===== CHART CAROUSEL ===== */
+  .chart-carousel {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 40px -40px;
+    position: relative;
+  }
+  .chart-carousel .carousel-track {
+    overflow: hidden;
+    position: relative;
+  }
+  .chart-carousel .carousel-slides {
+    display: flex;
+    transition: transform 0.4s ease;
+  }
+  .chart-carousel .carousel-slide {
+    min-width: 100%;
+    flex-shrink: 0;
+  }
+  .chart-carousel .carousel-slide .chart-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .chart-carousel .carousel-slide img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    margin-top: 8px;
+  }
+  .chart-carousel .carousel-slide .chart-source {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--text-light);
+    font-style: italic;
+  }
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  .carousel-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .carousel-btn:hover {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+  .carousel-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .carousel-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0;
+  }
+  .carousel-dot.active {
+    background: var(--gold);
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.5);
+    padding: 48px;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  /* ===== VIEW TRANSITIONS ===== */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Consistent chapter image style */
+  .chapter-thumb {
+    filter: saturate(0.6) brightness(0.85);
+    transition: filter 0.3s;
+  }
+  .chapter-list-item:hover .chapter-thumb {
+    filter: saturate(0.8) brightness(0.95);
+  }
+
+  @media (max-width: 900px) {
+    .hero-content { grid-template-columns: 1fr; gap: 40px; }
+    .hero h1 { font-size: 40px; }
+    .chapter-grid, .chapter-list { grid-template-columns: 1fr 1fr; }
+    .author-cards { grid-template-columns: 1fr; }
+    nav { padding: 0 24px; }
+    .hero, .whats-inside, .authors, .members-section { padding-left: 24px; padding-right: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">The <span>Unanchored</span> Central Banker</div>
+  <div class="nav-links">
+    <a href="#chapters">Chapters</a>
+    <a href="#authors">Authors</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#" class="btn-login">Read Online</a>
+  </div>
+</nav>
+
+<!-- ============================================
+     VIEW 1: LANDING PAGE
+     ============================================ -->
+<div class="view active" id="view-landing">
+
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-tag">New Book — 2026</div>
+      <h1>The <em>Unanchored</em> Central Banker</h1>
+      <p class="hero-subtitle">
+        A book about demography, fiscal instability, and the erosion of the central bank's ability to fight inflation single-mindedly.
+      </p>
+      <p class="hero-authors">by <strong>Manoj Pradhan</strong> and <strong>Charles Goodhart</strong></p>
+      <div class="hero-actions">
+        <a href="#" class="btn-primary">Read Online Edition</a>
+        <a href="#" class="btn-secondary">Buy Print Edition</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="book-mockup">
+        <div class="book-title">The Unanchored Central Banker</div>
+        <div class="book-line"></div>
+        <div class="book-author">Manoj Pradhan<br>&amp; Charles Goodhart</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENDORSEMENT -->
+<div class="endorsement-strip" id="reviews">
+  <blockquote>
+    "Pradhan and Goodhart succeed in highlighting the many policy challenges likely to arise from current demographic trends. Throughout, the book is remarkable for its careful assessment of competing arguments."
+  </blockquote>
+  <cite>— Bill White, Senior Fellow, C.D. Howe Institute; Chairman, OECD Economic &amp; Development Review Committee</cite>
+</div>
+
+<!-- WHAT'S INSIDE -->
+<section class="whats-inside" id="chapters">
+  <div class="section-label">What's Inside</div>
+  <h2 class="section-title">Eight chapters exploring the future of<br>central banking in an ageing world</h2>
+
+  <div class="chapter-grid">
+    <a class="chapter-card" href="#">
+      <div class="chapter-num">Chapter 1</div>
+      <h3>Overview &amp; Setting the Scene</h3>
+      <p>The demographic headwinds facing global economies and why central banks face an impossible balancing act.</p>
+    </a>
+    <a class="chapter-card" href="#">
+      <div class="chapter-num">Chapter 2</div>
+      <h3>Real Interest Rates Will Rise</h3>
+      <p>Why conventional models get it wrong about interest rates in an increasingly aged world.</p>
+    </a>
+    <a class="chapter-card" href="#">
+      <div class="chapter-num">Chapter 3</div>
+      <h3>Fiscal Policy Under Pressure</h3>
+      <p>How ageing populations create a persistent deterioration in government fiscal positions.</p>
+    </a>
+    <a class="chapter-card" href="#">
+      <div class="chapter-num">Chapter 4</div>
+      <h3>Will AI Overcome Demography?</h3>
+      <p>Can technological transformation offset the economic forces of an ageing society?</p>
+    </a>
+    <a class="chapter-card" href="#">
+      <div class="chapter-num">Chapter 5</div>
+      <h3>Immigration &amp; Labour Markets</h3>
+      <p>The immigration surge, the inevitable backlash, and what it means for labour supply.</p>
+    </a>
+    <a class="chapter-card" href="#">
+      <div class="chapter-num">Chapter 6</div>
+      <h3>The Erosion of Central Bank Power</h3>
+      <p>Why fighting inflation in highly indebted economies leads to financial instability.</p>
+    </a>
+    <a class="chapter-card" href="#">
+      <div class="chapter-num">Chapter 7</div>
+      <h3>Financial Stability Risks</h3>
+      <p>The interplay between monetary policy, fiscal dominance, and market fragility.</p>
+    </a>
+    <a class="chapter-card" href="#">
+      <div class="chapter-num">Chapter 8</div>
+      <h3>Conclusions &amp; The Road Ahead</h3>
+      <p>What policy makers, investors, and citizens should prepare for in the decades ahead.</p>
+    </a>
+  </div>
+</section>
+
+<!-- AUTHORS -->
+<section class="authors" id="authors">
+  <div class="authors-inner">
+    <div class="section-label">The Authors</div>
+    <h2 class="section-title">Written by leading voices in macroeconomics</h2>
+    <div class="author-cards">
+      <div class="author-card">
+        <div class="author-avatar"><img src="https://unanchoredcentralbanker.com/wp-content/uploads/charles-goodhart.png" alt="Charles Goodhart"></div>
+        <div>
+          <h3>Charles Goodhart</h3>
+          <span class="author-role">Norman Sosnow Professor Emeritus, LSE</span>
+          <p>A specialist monetary economist with decades alternating between academia and the Bank of England. Devised 'the Corset', advised Hong Kong on 'the Link', and authored Goodhart's Law. Former member of the Bank of England's Monetary Policy Committee.</p>
+        </div>
+      </div>
+      <div class="author-card">
+        <div class="author-avatar"><img src="https://unanchoredcentralbanker.com/wp-content/uploads/ManojPradhan-THM.jpg" alt="Manoj Pradhan"></div>
+        <div>
+          <h3>Manoj Pradhan</h3>
+          <span class="author-role">Founder, Talking Heads Macroeconomics</span>
+          <p>Previously Managing Director at Morgan Stanley leading the Global Economics team. Co-author of "The Great Demographic Reversal." Holds a PhD in economics from George Washington University and a Master's from London Business School.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /view-landing -->
+
+<!-- ============================================
+     VIEW 2: MEMBERS AREA — CHAPTER NAV
+     ============================================ -->
+<div class="view" id="view-chapters">
+
+<section class="members-section">
+  <div class="members-header">
+    <h2>Your Library</h2>
+    <div class="members-nav">
+      <a href="#" class="active">All Chapters</a>
+      <a href="#">Preface</a>
+      <a href="#">Authors</a>
+      <a href="#">Book Reviews</a>
+    </div>
+  </div>
+  <div class="chapter-list">
+    <a class="chapter-list-item" href="#">
+      <div class="chapter-thumb" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=250&fit=crop');">
+        <div class="ch-num">Chapter 1</div>
+      </div>
+      <div class="ch-body">
+        <h3>Overview &amp; Setting the Scene</h3>
+        <p>The demographic headwinds facing global economies.</p>
+        <span class="reading-time">25 min read</span>
+      </div>
+    </a>
+    <a class="chapter-list-item" href="#">
+      <div class="chapter-thumb" style="background-image: url('https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400&h=250&fit=crop');">
+        <div class="ch-num">Chapter 2</div>
+      </div>
+      <div class="ch-body">
+        <h3>Real Interest Rates Will Rise</h3>
+        <p>Why conventional models get interest rates wrong.</p>
+        <span class="reading-time">30 min read</span>
+      </div>
+    </a>
+    <a class="chapter-list-item" href="#">
+      <div class="chapter-thumb" style="background-image: url('https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=400&h=250&fit=crop');">
+        <div class="ch-num">Chapter 3</div>
+      </div>
+      <div class="ch-body">
+        <h3>Fiscal Policy Under Pressure</h3>
+        <p>Persistent fiscal deterioration from ageing populations.</p>
+        <span class="reading-time">28 min read</span>
+      </div>
+    </a>
+    <a class="chapter-list-item" href="#">
+      <div class="chapter-thumb" style="background-image: url('https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop');">
+        <div class="ch-num">Chapter 4</div>
+      </div>
+      <div class="ch-body">
+        <h3>Will AI Overcome Demography?</h3>
+        <p>Technology vs. the forces of an ageing society.</p>
+        <span class="reading-time">35 min read</span>
+      </div>
+    </a>
+    <a class="chapter-list-item" href="#">
+      <div class="chapter-thumb" style="background-image: url('https://images.unsplash.com/photo-1494783367193-149034c05e8f?w=400&h=250&fit=crop');">
+        <div class="ch-num">Chapter 5</div>
+      </div>
+      <div class="ch-body">
+        <h3>Immigration &amp; Labour Markets</h3>
+        <p>The surge, the backlash, and labour supply.</p>
+        <span class="reading-time">22 min read</span>
+      </div>
+    </a>
+    <a class="chapter-list-item" href="#">
+      <div class="chapter-thumb" style="background-image: url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=250&fit=crop');">
+        <div class="ch-num">Chapter 6</div>
+      </div>
+      <div class="ch-body">
+        <h3>The Erosion of Central Bank Power</h3>
+        <p>Fighting inflation in highly indebted economies.</p>
+        <span class="reading-time">32 min read</span>
+      </div>
+    </a>
+    <a class="chapter-list-item" href="#">
+      <div class="chapter-thumb" style="background-image: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=250&fit=crop');">
+        <div class="ch-num">Chapter 7</div>
+      </div>
+      <div class="ch-body">
+        <h3>Financial Stability Risks</h3>
+        <p>Monetary policy, fiscal dominance, and fragility.</p>
+        <span class="reading-time">27 min read</span>
+      </div>
+    </a>
+    <a class="chapter-list-item" href="#">
+      <div class="chapter-thumb" style="background-image: url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&h=250&fit=crop');">
+        <div class="ch-num">Chapter 8</div>
+      </div>
+      <div class="ch-body">
+        <h3>Conclusions &amp; The Road Ahead</h3>
+        <p>What to prepare for in the decades ahead.</p>
+        <span class="reading-time">20 min read</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+</div><!-- /view-chapters -->
+
+<!-- ============================================
+     VIEW 3: CHAPTER READING VIEW
+     ============================================ -->
+<div class="view" id="view-reading">
+
+<section class="reading-section">
+  <div class="reading-hero">
+    <div class="reading-hero-content">
+      <div class="ch-label">Chapter 4</div>
+      <h1>Will AI Overcome Demography?</h1>
+      <div class="ch-meta">35 min read &middot; 8 charts &middot; Part III: Solutions?</div>
+    </div>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="#" class="active">Top</a>
+    <a href="#">I. Balancing Act</a>
+    <a href="#">II. Fiscally Unstable</a>
+    <a href="#">III. Solutions?</a>
+    <a href="#">IV. Conclusions</a>
+  </div>
+
+  <div class="reading-content">
+
+    <!-- EPIGRAPHS -->
+    <div class="epigraph">
+      "[AI] will be transformative in many ways. How fast that occurs, I think, is very much open for debate. I don't think it's going to occur nearly as rapidly as some would predict."
+    </div>
+    <div class="epigraph-cite">
+      — David Autor, Department of Economics, MIT, in conversation with Martin Wolf, Apr 2025, The Financial Times.
+    </div>
+
+    <div class="epigraph">
+      "The real problem that the world is facing currently, and will face increasingly, is not the scarcity of jobs but the scarcity of manpower. Manpower shortages are plaguing every economy these days. There aren't enough people because of ageing, as well as other norms that have emerged [such as retirement ages, shorter working hours and more vacation time], which means the total number of hours that anybody works over a lifetime has fallen enormously in the last 100 years. You add that to the demographic revolution, and you realise it's manpower that is going to be in short supply. That problem was resolved in the past 30 or 40 years by the ever-growing ratio of female labour force participation, but we've exhausted that."
+    </div>
+    <div class="epigraph-cite">
+      — Joel Mokyr, 2025 Nobel Laureate (with Aghion and Howitt) for work on innovation-driven economic growth, Nov 2025, Caixin Global.
+    </div>
+
+    <!-- INTRO -->
+    <p>AI could be such a transformative innovation that following the various tendrils along which a transformation could occur would (and should) itself take an entire book. Given our focus on demography, we choose to focus on the possible impact that AI could have on employment and (dis)inflation.</p>
+
+    <p>We do, however, for completeness, offer some succinct, early thoughts on the broad impact that is possible from this precocious technology:</p>
+
+    <div class="indent">
+      <p><strong>Total factor productivity (TFP):</strong> The range of estimates about the impact of AI on TFP growth varies from Acemoglu's 0.05% annually over the next 10 years (Acemoglu, 2024) to a huge 0.5% annually (which would compound dramatically over the decade). If the more optimistic estimates come to fruition, the impact on fiscal sustainability and indeed economic growth could be big enough to offset a decent portion of the drag on growth because of demography.</p>
+      <p><strong>Investment and real interest rates:</strong> In the short run, spending on data center capacity and AI-related spending by hyperscalers accounted for a large part of private final demand in the US in 2025. If AI requires such investment to be a persistent feature of the landscape for the next few years, it may significantly accelerate the increase in interest rates we discussed in Chapter 2.</p>
+      <p><strong>Caring and healthcare costs:</strong> AI may help in providing (a) AI-aided 'companionship' that emulates empathy, and/or (b) by helping contain the increase in healthcare costs via (for example) AI-optimised deep brain stimulation for Parkinson's, or image analysis for rapid stroke detection, etc.</p>
+    </div>
+
+    <p>None of these results has materialised, and we make no guesses on how long it could take, or if they will at all. With a similar caveat in mind, we move on to examining the possible impact of AI on employment and disinflation.</p>
+
+    <!-- SECTION I BANNER -->
+    <div class="section-image">
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/I-7.webp" alt="Section I: Balancing Act">
+    </div>
+
+    <p>In an introductory economics textbook model, a positive supply shock should offset a negative one, i.e., rising productivity from labour-saving AI should compensate for the growing shortage of workers in an ageing economy, leaving the economy mostly unchanged. Closer to the real world, comparing assured headwinds from demographic change with the promise of AI (which we use henceforth as a catch-all term for AI, on its own or in combination with robotics) is far more difficult.</p>
+
+    <p>That isn't just because of the difference in the uncertainty surrounding how or when each will manifest in the economy, but also because they play complementary roles in the production function and affect the economy in different and complex ways. An ageing society will require an increasing number of workers to be reallocated to the caring sector, further straining a labour force that is already shrinking thanks to demography. We need automation and AI to release workers from tasks that can be automated. Whether the decline in labour demand due to AI can match the fall in the supply of labour is the key uncertainty.</p>
+
+    <p>We are not technology experts, and we make no predictions about the final outcome. Instead, we try to apply the same principles we have used to think about demography across global and sectoral labour flows to assess whether AI will offset the forces of demography.</p>
+
+    <p>(i) Can AI reduce labour demand substantially, offsetting the decline in labour supply in ageing societies, and</p>
+    <p>(ii) How will AI affect inequality? Will it reinforce or counter the decline in inequality that we expect demographic change will produce?</p>
+
+    <p><strong>Falling inequality is likely to be the clearest impact of AI</strong> as it reduces the premium that higher education has historically commanded. Equally, emerging economies that have been held back by a lack of human capital could see their workforce gain skills that would otherwise have taken decades to accumulate organically.</p>
+
+    <!-- SECTION II BANNER -->
+    <div class="section-image">
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/II-7.webp" alt="Section II: Fiscally Unstable">
+    </div>
+
+    <h3>Section I</h3>
+    <h2>1. Technological disruption has caused worker displacement</h2>
+
+    <p><strong>In the late 1800s, the United States,</strong> with support from Argentina, Australia and Canada, shifted the pricing of agricultural products from being nationally determined, i.e. by the success/failure of the local harvest, to an internationally determined level. The introduction of steam engines provided new access to fertile and relatively cheap land in the US and other associated countries. In turn, that led to a lower price of many agricultural products, notably the main feed grains and meat, to a level which only the more productive parts of the advanced economies in Europe could match.</p>
+
+    <p>The arrival of cheap agricultural products in the late 19th century, made possible by the exploitation of fertile new lands thanks to advances in transportation, i.e., railways and steamships, led to severe rural distress and depopulation from about 1873 until about 1900. This latter period in the UK was frequently termed the 'Long Depression', with the worst of the effects in the 1880s. If one were to travel around the UK, one might wonder how currently small villages were able to support such large and imposing churches. The answer is that the villages were much more populous in the 19th century than they have become, thanks in no small part to the depopulation of rural areas that could not compete with the US in agriculture.</p>
+
+    <p>Carl Sandburg's poem from 1914, entitled 'Chicago', started with the famous line that reads 'Hog butcher for the world'. When America (as well as Canada, Australia, and Argentina) helped provide grain and meat to the world, there was no room for farm workers in Europe to do the same, except in the most fertile and productive areas.</p>
+
+    <p>In a similar fashion, <strong>the rise of China</strong> helped to determine global manufacturing prices (see Chapter 3), leading to significant labour flows into manufacturing in China and out of manufacturing in many advanced economies, particularly the US.</p>
+
+    <h2>2. 'Winning' areas, however, saw large inflows of labour.</h2>
+
+    <div class="chart-container">
+      <div class="chart-label">Chart 4.1: Shaw-Taylor (2025): Even at the height of the Great Deflation of the late 19th century, employment in the manufacturing sector remained steady while the share of services sector jobs grew as living standards rose sharply.</div>
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.1.png" alt="Chart 4.1: UK Male Employment, By Sector">
+      <div class="chart-source">Sources: Shaw-Taylor, 2025</div>
+    </div>
+
+    <p>The distress of the rural population in Europe towards the end of the 19th century was so great that it led to a sharp rise in migration from Northern Europe (including Germany, all the Scandinavian countries, the UK and Ireland) to the US, Canada, Australia and Argentina. Such emigration then shifted considerably more towards Southern Europe and Eastern Europe from the 1890s onwards. Somewhat surprisingly, in the US, the ratio of immigrants to the native-born population has remained roughly constant, at slightly over 13%, from the end of the 19th century to 2020.</p>
+
+    <div class="chart-container">
+      <div class="chart-label">Chart 4.2: China's industrial boom created an internal urban migration, the kind of which has never been seen before in history</div>
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.2.png" alt="Chart 4.2: China internal migration">
+      <div class="chart-source">Source: Cheng and Duan, 2021</div>
+    </div>
+
+    <p>China's rapid economic growth created the greatest internal migration seen in history. The Pearl River Delta, the icon of China's industrialisation, saw the resident population rise from around 10 million in 1978, when China's economy started to open up and transform internally, to somewhere between 70 to 80 million by the start of this decade.</p>
+
+    <div class="chart-container">
+      <div class="chart-label">Chart 4.3: Pierce and Schott (op cit) show that manufacturing employment fell sharply after 2000</div>
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.3.png" alt="Chart 4.3: Manufacturing employment">
+      <div class="chart-source">Source: FRED</div>
+    </div>
+
+    <p>Even in the US, the loss of manufacturing jobs documented by Pierce and Schott (op cit) was so heavily outweighed by the rise in overall employment that the unemployment rate fell by nearly 2% in the expansion of the 2000s. Part of the reason for that expansion, and the well-known housing bubble that ended it, was the decline in interest rates that was driven in part, and rather ironically, by the disinflation engendered by the positive supply shock from China.</p>
+
+    <p>Even though manufacturing employment fell by 4 million over 2000-2007, overall employment rose by a net 7 million workers over the same period, implying a gross increase of 11 million workers. While the analogy between the role of the US in bringing about the globalisation and internationalisation of agriculture and the role of China in bringing about the globalisation and internationalisation of manufacturing has not been sufficiently appreciated, the real purpose of this historical comment is to note that any major technological development is likely to cause two counteracting flows of labour.</p>
+
+    <div class="indent">
+      <p><strong>First,</strong> worker displacement occurs through a sharp decline in employment among those who have the particular abilities, whether muscular, cognitive, or empathetic, that the new technology supercedes.</p>
+      <p><strong>Second,</strong> new sectors emerge and labour in the 'winning' sectors rises — enough usually to absorb displaced workers over time.</p>
+    </div>
+
+    <!-- SECTION III BANNER -->
+    <div class="section-image">
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/III-6.webp" alt="Section III: Solutions?">
+    </div>
+
+    <h3>Section II</h3>
+    <h2>1. The early signs regarding the impact of AI are mixed.</h2>
+
+    <p>There are concerns about a financial bubble because of the cross-investment flows among AI firms, but the capex being deployed by the so-called 'hyperscalers' is being financed by their own cash holdings rather than external financing. That ringfences the risks associated with AI-related investment and allows innovation to continue. The usage data is also mixed, with signs that households/individuals are adopting AI consistently, but firm-level adoption is limited (Goldman Sachs, 2025).</p>
+
+    <p>A survey of US CFOs conducted jointly by Duke University and the Federal Reserve Banks of Richmond and Atlanta (Dec 2025) shows that firms are investing relatively small amounts on AI adoption (Chart 4.4a). The distribution of their assessment is skewed towards improvement in efficiency (Chart 4.4b), but a symmetric distribution of (not much change in) employment and costs (Chart 4.4c).</p>
+
+    <div class="chart-carousel" data-carousel>
+      <div class="carousel-track">
+        <div class="carousel-slides">
+          <div class="carousel-slide">
+            <div class="chart-label">Chart 4.4a: Investment related to AI adoption remains modest in the bulk of firms in the survey</div>
+            <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.4a.png" alt="Chart 4.4a: AI Investment">
+            <div class="chart-source">Source: The Federal Reserve Bank of Richmond</div>
+          </div>
+          <div class="carousel-slide">
+            <div class="chart-label">Chart 4.4b: Labour productivity and decision-making speed and accuracy appear to have shown modest improvements due to AI</div>
+            <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.4b.png" alt="Chart 4.4b: AI Productivity Impact">
+            <div class="chart-source">Source: The Federal Reserve Bank of Richmond</div>
+          </div>
+          <div class="carousel-slide">
+            <div class="chart-label">Chart 4.4c: Firms reported virtually no impact of AI on employment or other operating costs</div>
+            <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.4c.png" alt="Chart 4.4c: AI Employment Impact">
+            <div class="chart-source">Source: The Federal Reserve Bank of Richmond</div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-controls">
+        <button class="carousel-btn" data-prev>&#8592;</button>
+        <div class="carousel-dots">
+          <button class="carousel-dot active" data-dot="0"></button>
+          <button class="carousel-dot" data-dot="1"></button>
+          <button class="carousel-dot" data-dot="2"></button>
+        </div>
+        <button class="carousel-btn" data-next>&#8594;</button>
+      </div>
+    </div>
+
+    <p>US data have shown strong productivity growth over the last 5-6 years (particularly in 2025). However, whether one can attribute all or even most of it to AI is not a straightforward question. Productivity growth has been strong for the last 5-6 years, i.e., since just before the pandemic. If the 'breakout' year of Generative AI is approximately 2023 (McKinsey, 2025), then strong productivity precedes AI. Instead, higher productivity, i.e. a rise in the output/worker ratio, seems to coincide with a stronger fiscal impulse from large deficits that precede the pandemic and have remained large since 2018.</p>
+
+    <div class="chart-container">
+      <div class="chart-label">Chart 4.5: The unemployment rate has risen for college graduates and remained steadier more recently for those with less than a high school diploma – does that suggest AI is at work?</div>
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.5.png" alt="Chart 4.5: Unemployment by Education">
+      <div class="chart-source">Source: FRED</div>
+    </div>
+
+    <p>Is there any sign of the impact of AI in the employment data? US labour market data do show a persistent increase in the unemployment rate for college graduates from early 2023 (Chart 4.5). By contrast, the rise in the unemployment rate among those with less than a high school degree appears to have moderated since late 2024.</p>
+
+    <h2>2. Will aggregate employment rise or fall over time?</h2>
+
+    <p>An increasingly aged society will (i) reduce labour supply (because labour participation falls with age), and (ii) divert it from activities that are productive in the traditional economic sense to more socially productive activities. Caring for the elderly, for example, is a service that is consumed by those who can no longer join the labour force to generate the income to pay for these services.</p>
+
+    <h2>3. Could AI create widespread unemployment, or sharply reduce the demand for labour in services?</h2>
+
+    <p>In aggregate terms, Mokyr (2025) argues that modest 'technological unemployment' may indeed materialise, but severe unemployment is rarely the result of technology booms. Instead, it is collapses in demand that lead to bouts of severe unemployment.</p>
+
+    <p>Most of the disruption that the world has experienced over the last century, and certainly since the rise of China from the early 1980s, has been in manufacturing. Autor (2025) argues that, since manufacturing tends to be concentrated within an industry and usually within a geographical region, a labour-saving technology can hurt an entire sector or area in a short, sharp move, making technological change a socially disruptive issue as well. However, these experiences may not translate linearly into the adoption of AI, particularly into the services sector.</p>
+
+    <div class="chart-container">
+      <div class="chart-label">Chart 4.6: Worker displacement and reinstatement rates in the US – Acemoglu and Restropo (2019)</div>
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.6.png" alt="Chart 4.6: Displacement vs Reinstatement">
+      <div class="chart-source">Source: Goldman Sachs Investment Research 2023, Acemoglu and Restropo (2019)</div>
+    </div>
+
+    <p>What matters for aggregate employment is what happens to the cohort of displaced workers. Acemoglu and Restropo (2019) find that reinstatement rates have usually more than offset displacement, leading to overall employment growth. That is not true for the 1995-2007 period, a shortfall that may have somewhat mistakenly been attributed to technology – we argue these dynamics from 2000 onwards (per Pierce and Schott, op cit) owe primarily to the China shock.</p>
+
+    <div class="chart-container">
+      <div class="chart-label">Chart 4.7: New vs pre-existing work since 1940</div>
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.7.png" alt="Chart 4.7: New vs Pre-existing Work">
+      <div class="chart-source">Source: Autor (2022)</div>
+    </div>
+
+    <p>High reinstatement rates could be a function of structural changes in the economy. Autor et al (2022) find that 60% of those employed today are in jobs that did not exist in 1940.</p>
+
+    <p>Over time, reinstatement rates could be supported if AI is used as a pathway to rebuild middle-class jobs (Autor, Feb 2024). "Because of AI's capacity to weave information and rules with acquired experience to support decision-making, it can be applied to enable a larger set of workers possessing complementary knowledge to perform some of the higher-stakes decision-making tasks that are currently arrogated to elite experts, e.g., medical care to doctors, document production to lawyers, software coding to computer engineers, and undergraduate education to professors."</p>
+
+    <div class="chart-container">
+      <div class="chart-label">Chart 4.8: Real disposable incomes vs the ratio of consumer credit to nominal disposable income</div>
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-4-Ai-Chart-4.8.png" alt="Chart 4.8: Disposable Income vs Consumer Credit">
+      <div class="chart-source">Source: FRED</div>
+    </div>
+
+    <p>While worker displacement raises a valid concern, it would be folly to ignore the general equilibrium effects of rising productivity and disposable incomes of those who retain their jobs. As real disposable incomes have risen steadily, consumer credit has been extended more generously. The ratio of consumer credit to each dollar of disposable income has grown over time in tandem with the real purchasing power of households.</p>
+
+    <h2>4. Would AI lead to persistent disinflation?</h2>
+
+    <p>AI could deliver benign disinflation from exceptionally strong productivity growth, or malign disinflation if employment falls so much that labour as a whole simply has no bargaining power. The malign channel would be the most potent offset to demography since we have argued that labour shortages would lead to the growing importance of the services Phillips curve in chapter 3.</p>
+
+    <h2>5. AI will almost certainly reduce inequality</h2>
+
+    <p>A clue to why we reach this conclusion comes from Autor earlier, where he argues that AI "can be applied to enable a larger set of workers possessing complementary knowledge to perform some of the higher-stakes decision-making tasks that are currently arrogated to elite experts".</p>
+
+    <p>This argument can be extrapolated to the services sector and to highly educated workers who have managed to erect a high barrier to entry to the market for jobs that require advanced training. Greater absorption of AI into the services sector can allow those with lower technical skills to mimic some of the tasks that only those with elite education could perform in the past.</p>
+
+    <!-- CONCLUSIONS BANNER -->
+    <div class="section-image">
+      <img src="https://unanchoredcentralbanker.com/wp-content/uploads/Chapter-6-Section-IV.webp" alt="Section IV: Conclusions">
+    </div>
+
+    <h3>Conclusions</h3>
+    <h2>Summary</h2>
+
+    <p>AI will unambiguously lower inequality as it disrupts cognitive tasks and lowers the premium that cognitively skilled workers have commanded, particularly in the services sector.</p>
+
+    <p>The likelihood of a gross increase in so-called technological unemployment rises with the probability of the 'success' of AI. However, winning sectors/economies tend to see inflows of labour that identify and seek out opportunities in the booming sectors. Over time, as new sectors inevitably arise, employment will rise. The impact of AI on employment is ambiguous in the near term and most probably positive in the medium term.</p>
+
+    <p>AI will impact individual sectors as well as total factor productivity if it successfully changes the way the economy functions. It could have an impact on less discussed issues (with relation to this book) such as healthcare costs and caregiving for the elderly.</p>
+
+    <div class="section-break">* * *</div>
+
+    <h3>References</h3>
+    <div class="references">
+      <p>Autor, David, and Martin Wolf, Apr 2025, "Martin Wolf talks to David Autor — could AI be a bigger threat to US jobs than China?", The Financial Times.</p>
+      <p>Acemoglu, D., Autor, D., Hazell, J., &amp; Restrepo, P., 2022, "Artificial Intelligence and Jobs: Evidence from Online Vacancies." Journal of Labor Economics, 40(S1), S293–S340.</p>
+      <p>Autor, David, Caroline Chin, Anna M. Salomons, and Bryan Seegmiller, 2022, "New Frontiers: The Origins and Content of New Work, 1940–2018", National Bureau of Economic Research Working Paper No. 30389.</p>
+      <p>Acemoglu, Daron and Pascual Restrepo, 2019, "Automation and New Tasks: How Technology Displaces and Reinstates Labor", Journal of Economic Perspectives, Vol. 33, No. 2.</p>
+      <p>Caixin Global, Nov 2025, "Nobel Laureate Mokyr on AI, Innovation and the Uneasy Marriage of Tech and State".</p>
+    </div>
+
+  </div>
+</section>
+
+</div><!-- /view-reading -->
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 The Unanchored Central Banker &middot; Manoj Pradhan &amp; Charles Goodhart &middot; <a href="#">Privacy Policy</a> &middot; <a href="#">Contact</a></p>
+</footer>
+
+<script>
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// "Read Online" buttons → show chapters view
+document.querySelectorAll('.btn-login, .btn-primary').forEach(btn => {
+  btn.addEventListener('click', e => { e.preventDefault(); showView('view-chapters'); });
+});
+
+// Chapter list items → show reading view
+document.querySelectorAll('.chapter-list-item').forEach(item => {
+  item.addEventListener('click', e => { e.preventDefault(); showView('view-reading'); });
+});
+
+// Home icon in chapter nav → back to chapters
+document.querySelector('.chapter-nav')?.addEventListener('click', e => {
+  if (e.target.textContent.trim() === 'Top') return; // let Top scroll
+});
+
+// Logo → back to landing
+document.querySelector('.logo').addEventListener('click', e => {
+  e.preventDefault(); showView('view-landing');
+});
+document.querySelector('.logo').style.cursor = 'pointer';
+
+// Nav links
+document.querySelectorAll('.nav-links a:not(.btn-login)').forEach(link => {
+  link.addEventListener('click', e => {
+    const current = document.querySelector('.view.active');
+    if (current.id !== 'view-landing') {
+      e.preventDefault();
+      showView('view-landing');
+      setTimeout(() => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  });
+});
+
+// Members nav "All Chapters" → back to chapters list
+document.querySelectorAll('.members-nav a').forEach(link => {
+  link.addEventListener('click', e => e.preventDefault());
+});
+
+// Carousel logic
+document.querySelectorAll('[data-carousel]').forEach(carousel => {
+  const slides = carousel.querySelector('.carousel-slides');
+  const slideEls = carousel.querySelectorAll('.carousel-slide');
+  const dots = carousel.querySelectorAll('.carousel-dot');
+  const prevBtn = carousel.querySelector('[data-prev]');
+  const nextBtn = carousel.querySelector('[data-next]');
+  let current = 0;
+  const total = slideEls.length;
+
+  function goTo(index) {
+    current = (index + total) % total;
+    slides.style.transform = `translateX(-${current * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => goTo(parseInt(dot.dataset.dot)));
+  });
+});
+</script>
+
+</body>
+</html>
